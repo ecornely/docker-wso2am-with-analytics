@@ -1,0 +1,6 @@
+#!/bin/bash
+#TODO check network wso2am exist
+#IF not docker network create wso2am
+#TODO check if old docker named so exist
+#IF yes docker rm analytics
+docker run --name am --network wso2am -p 9443:9443 -p 8243:8243 -i nrb/wso2am

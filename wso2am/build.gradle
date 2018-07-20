@@ -1,0 +1,100 @@
+buildscript {
+  dependencies {
+      classpath 'com.bmuschko:gradle-docker-plugin:3.4.4'
+  }
+}
+
+apply plugin: 'java-library'
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+import org.apache.tools.ant.filters.ReplaceTokens
+import com.bmuschko.gradle.docker.tasks.image.*
+
+project.version="2.5.0"
+
+repositories {
+  mavenCentral()
+}
+dependencies {
+  compile 'org.xerial.snappy:snappy-java:1+'
+  compile 'dnsjava:dnsjava:2+'
+  compile 'org.wso2.carbon.kubernetes.artifacts:kubernetes-membership-scheme:1+'
+  compile 'com.oracle:ojdbc7:7+'
+}
+
+task downloadWso2{
+  def f = file("wso2am-${project.version}.zip")
+  if (!f.exists()) {
+    new URL("https://github.com/wso2/product-apim/releases/download/v${project.version}/wso2am-${project.version}.zip").withInputStream{ i -> f.withOutputStream{ it << i }}
+  }
+}
+
+task copyUnfilteredResource(type:Copy) {
+  from('resources')
+  include "**/*.jks"
+  into "${buildDir}/files"
+}
+task filterResources(type:Copy) {
+  from('resources')
+  filter ReplaceTokens, tokens: new groovy.json.JsonSlurper().parse(file("build.json"))
+  exclude "**/*.jks"
+  into "${buildDir}/files"
+}
+task copyWso2(type:Copy, dependsOn:"downloadWso2"){
+  from("wso2am-${project.version}.zip")
+  into "${buildDir}"
+}
+
+task copyAllResources(dependsOn: ['copyUnfilteredResource', 'filterResources', 'copyWso2'])
+
+task copyDependencies(type: Copy) {
+   from configurations.compile
+   exclude "jackson-*.jar"
+   into project.buildDir
+}
+
+task createDockerfile(type: Dockerfile) {
+  /*Used this so that variable can come from gradle*/
+  destFile = project.file("${buildDir}/Dockerfile")
+  from('centos')
+  maintainer('Eric Cornely "eric.cornely@nrb.be"')
+  environmentVariable([ 
+  'HTTP_PROXY':'http://webproxy.nrb.be:8080', 
+  'HTTPS_PROXY':'http://webproxy.nrb.be:8080',
+  'http_proxy':'http://webproxy.nrb.be:8080',
+  'https_proxy':'http://webproxy.nrb.be:8080',
+  'no_proxy':'*.nrb.be'
+  ])
+  arg('USER=wso2carbon')
+  arg('USER_ID=802')
+  arg('USER_GROUP=wso2')
+  arg('USER_GROUP_ID=802')
+  arg('USER_HOME=/home/\${USER}')
+  arg('WSO2AM_VERSION=2.5.0')
+  runCommand('yum install -y nmap-ncat nmap openssl unzip curl java-1.8.0-openjdk-devel')
+  runCommand('groupadd --system --gid \${USER_GROUP_ID} \${USER_GROUP} && useradd --system --create-home --home-dir \${USER_HOME} --shell /bin/false --gid \${USER_GROUP_ID} --uid \${USER_ID} \${USER}')
+  runCommand('echo -n root | passwd --stdin root')
+  copyFile("files/ssl/*", "/usr/share/pki/ca-trust-source/anchors/")
+  runCommand("update-ca-trust && update-ca-trust extract")
+  instruction('COPY --chown=wso2carbon:wso2 "wso2am-\${WSO2AM_VERSION}.zip" "\${USER_HOME}/"')
+  runCommand('unzip -d \${USER_HOME}/ \${USER_HOME}/wso2am-\${WSO2AM_VERSION}.zip')
+  runCommand('mv \${USER_HOME}/wso2am-\${WSO2AM_VERSION} \${USER_HOME}/wso2am')
+  runCommand('rm \${USER_HOME}/wso2am-\${WSO2AM_VERSION}.zip')
+  runCommand('mkdir -p /etc/.java/.userPrefs && mkdir -p /etc/.java/.systemPrefs && chmod -R 777 /etc/.java')
+  copyFile('ojdbc7.jar', '\${USER_HOME}/wso2am/repository/components/lib/')
+  copyFile('snappy-java.jar', '\${USER_HOME}/wso2am/repository/components/lib/')
+  copyFile('dnsjava.jar', '\${USER_HOME}/wso2am/repository/components/lib/')
+  copyFile('kubernetes-membership-scheme.jar', '\${USER_HOME}/wso2am/repository/components/dropins/')
+  runCommand('chown -R \${USER}:\${USER_GROUP} \${USER_HOME}/wso2am')
+  instruction('COPY --chown=wso2carbon:wso2 "files/repository/ \${USER_HOME}/wso2am/repository/"')
+   user('\${USER}')
+  workingDir('\${USER_HOME}')
+
+  environmentVariable(['WSO2_SERVER_HOME':'\${USER_HOME}/wso2am','WORKING_DIRECTORY':'\${USER_HOME}', 'JAVA_HOME':'/etc/alternatives/jre'])
+  exposePort(8280, 8243, 9763, 9443, 9099, 5672, 9711, 9611, 7711, 7611, 10397)
+  entryPoint('\${WSO2_SERVER_HOME}/bin/wso2server.sh')
+}
+
+processTestResources.dependsOn copyAllResources
+processTestResources.dependsOn copyDependencies
+processTestResources.dependsOn createDockerfile

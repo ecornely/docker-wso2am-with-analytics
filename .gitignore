@@ -1,0 +1,10 @@
+docker-apim/
+build/
+.bash*
+.kshrc
+.zshrc
+.gradle/
+passwords.sh
+gradle.properties
+build.json
+wso2am-*.zip

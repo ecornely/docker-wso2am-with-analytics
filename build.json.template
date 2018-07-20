@@ -1,0 +1,42 @@
+{
+  "adminPassword":"secr&t",
+  "adminPasswordXml":"secr&amp;et",
+  "ldapDomainName" : "wso2.org",
+  "ldapUrl":"ldaps://ldap01.wso2.org:636 ldaps://ldap02.wso2.org:636",
+  "ldapUser":"srv-o2-ldap@wso2.org",
+  "ldapPassword":"secr3t",
+  "ldapUserSearchBase":"DC=wso2,DC=org",
+  "ldapGroupSearchBase":"OU=Groups,OU=REPOSITORY,DC=wso2,DC=org",
+  "postLogoutRedirectURI":"https://servername.wso2.org:9443/store/",
+  "host":"servername.wso2.org:9443",
+  "whiteListedHostNames" : "[\"localhost\", \"servername.wso2.org:9443\", \"am\", \"172.18.0.*\", \"servername.wso2.org\", \"servername\"]",
+  "metricsDBurl" : "jdbc:oracle:thin:@(DESCRIPTION= (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =db.wso2.org)(PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = ORASRV)))",
+  "metricsDBusername" : "WSO2_METRICS_DB",
+  "metricsDBpassword" : "secr3t",
+  "metricsDBdriverClass" : "oracle.jdbc.OracleDriver",
+  "metricsDBvalidationQuery" : "SELECT 1 FROM DUAL",
+
+  "carbonDBurl" : "jdbc:oracle:thin:@(DESCRIPTION= (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =db.wso2.org)(PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = ORASRV)))",
+  "carbonDBusername" : "WSO2_CARBON_DB",
+  "carbonDBpassword" : "secr3t",
+  "carbonDBdriverClass" : "oracle.jdbc.OracleDriver",
+  "carbonDBvalidationQuery" : "SELECT 1 FROM DUAL",
+
+  "amDBurl" : "jdbc:oracle:thin:@(DESCRIPTION= (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =db.wso2.org)(PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = ORASRV)))",
+  "amDBusername" : "WSO2AM_DB",
+  "amDBpassword" : "secr3t",
+  "amDBdriverClass" : "oracle.jdbc.OracleDriver",
+  "amDBvalidationQuery" : "SELECT 1 FROM DUAL",
+
+  "statsDBurl" : "jdbc:oracle:thin:@(DESCRIPTION= (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =db.wso2.org)(PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = ORASRV)))",
+  "statsDBusername" : "WSO2AM_STATS_DB",
+  "statsDBpassword" : "secr3t",
+  "statsDBdriverClass" : "oracle.jdbc.OracleDriver",
+  "statsDBvalidationQuery" : "SELECT 1 FROM DUAL",
+
+  "storeDBurl" : "jdbc:oracle:thin:@(DESCRIPTION= (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =db.wso2.org)(PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = ORASRV)))",
+  "storeDBusername" : "WSO2_MB_STORE_DB",
+  "storeDBpassword" : "secr3t",
+  "storeDBdriverClass" : "oracle.jdbc.OracleDriver",
+  "storeDBvalidationQuery" : "SELECT 1 FROM DUAL"
+}
