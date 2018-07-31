@@ -93,6 +93,12 @@ task createDockerfile(type: Dockerfile) {
   entryPoint('\${WSO2_SERVER_HOME}/bin/wso2server.sh')
 }
 
+task buildDockerImage(type: DockerBuildImage, dependsOn: ['createDockerfile']) {
+  dockerFile = file("${buildDir}/Dockerfile")
+  inputDir = buildDir
+  tag = 'nrb/wso2am'
+}
+
 processResources.dependsOn(['copyAllResources', 'copyDependencies'])
 build.dependsOn(['processResources', 'buildDockerImage'])
 
