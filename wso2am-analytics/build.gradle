@@ -23,7 +23,7 @@ dependencies {
 }
 
 task downloadWso2{
-  def f = file("wso2am-${project.version}.zip")
+  def f = file("wso2am-analytics-${project.version}.zip")
   if (!f.exists()) {
     new URL("https://github.com/wso2/analytics-apim/releases/download/v${project.version}/wso2am-analytics-${project.version}.zip").withInputStream{ i -> f.withOutputStream{ it << i }}
   }
