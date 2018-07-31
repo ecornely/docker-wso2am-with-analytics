@@ -20,7 +20,7 @@ dependencies {
 }
 
 task downloadWso2{
-  def f = file("${buildDir}/wso2am-${project.version}.zip")
+  def f = file("wso2am-${project.version}.zip")
   if (!f.exists()) {
     new URL("https://github.com/wso2/product-apim/releases/download/v${project.version}/wso2am-${project.version}.zip").withInputStream{ i -> f.withOutputStream{ it << i }}
   }
@@ -45,7 +45,8 @@ task copyWso2(type:Copy, dependsOn:"downloadWso2"){
 task copyAllResources(dependsOn: ['copyUnfilteredResource', 'filterResources', 'copyWso2'])
 
 task copyDependencies(type: Copy) {
-   from configurations.compile
+   from(configurations.compile)
+   rename {fileName -> fileName.replaceAll("(.*)-\\d.*?\\.jar", "\$1.jar")}
    exclude "jackson-*.jar"
    into project.buildDir
 }
@@ -67,7 +68,7 @@ task createDockerfile(type: Dockerfile) {
   arg('USER_GROUP=wso2')
   arg('USER_GROUP_ID=802')
   arg('USER_HOME=/home/\${USER}')
-  arg('WSO2AM_VERSION=2.5.0')
+  arg("WSO2AM_VERSION=${project.version}")
   runCommand('yum install -y nmap-ncat nmap openssl unzip curl java-1.8.0-openjdk-devel')
   runCommand('groupadd --system --gid \${USER_GROUP_ID} \${USER_GROUP} && useradd --system --create-home --home-dir \${USER_HOME} --shell /bin/false --gid \${USER_GROUP_ID} --uid \${USER_ID} \${USER}')
   runCommand('echo -n root | passwd --stdin root')
@@ -83,7 +84,7 @@ task createDockerfile(type: Dockerfile) {
   copyFile('dnsjava.jar', '\${USER_HOME}/wso2am/repository/components/lib/')
   copyFile('kubernetes-membership-scheme.jar', '\${USER_HOME}/wso2am/repository/components/dropins/')
   runCommand('chown -R \${USER}:\${USER_GROUP} \${USER_HOME}/wso2am')
-  instruction('COPY --chown=wso2carbon:wso2 "files/repository/ \${USER_HOME}/wso2am/repository/"')
+  instruction('COPY --chown=wso2carbon:wso2 "files/repository/" "\${USER_HOME}/wso2am/repository/"')
    user('\${USER}')
   workingDir('\${USER_HOME}')
 
@@ -92,6 +93,6 @@ task createDockerfile(type: Dockerfile) {
   entryPoint('\${WSO2_SERVER_HOME}/bin/wso2server.sh')
 }
 
-processTestResources.dependsOn copyAllResources
-processTestResources.dependsOn copyDependencies
-processTestResources.dependsOn createDockerfile
+processResources.dependsOn(['copyAllResources', 'copyDependencies'])
+build.dependsOn(['processResources', 'buildDockerImage'])
+

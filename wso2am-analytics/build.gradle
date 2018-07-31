@@ -20,7 +20,7 @@ dependencies {
 }
 
 task downloadWso2{
-  def f = file("${buildDir}/wso2am-analytics-${project.version}.zip")
+  def f = file("wso2am-analytics-${project.version}.zip")
   if (!f.exists()) {
     new URL("https://github.com/wso2/analytics-apim/releases/download/v${project.version}/wso2am-analytics-${project.version}.zip").withInputStream{ i -> f.withOutputStream{ it << i }}
   }
@@ -38,7 +38,7 @@ task filterResources(type:Copy) {
   into "${buildDir}/files"
 }
 task copyWso2(type:Copy, dependsOn:"downloadWso2"){
-  from("wso2am-${project.version}.zip")
+  from("wso2am-analytics-${project.version}.zip")
   into "${buildDir}"
 }
 
