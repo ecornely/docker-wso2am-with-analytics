@@ -14,6 +14,10 @@ Bash, curl, docker, gradle
 ### Installing
 
 Clone on the docker host
+
+Create the build.json in both wso2am and wso2am-analytics (if needed the gradle.properties) based on the templates provided
+
+Run gradle then the container as follows
 ```
 gradle build
 wso2am-analytics/run
@@ -29,6 +33,6 @@ Still 0.0.1-SNAPSHOT
 
 ## Authors
 
-* **Eric Corenely** - *Initial work* - [ecornely](https://github.com/ecornely)
+* **Eric Cornely** - *Initial work* - [ecornely](https://github.com/ecornely)
 
 See also the list of [contributors](https://github.com/ecornely/docker-wso2am-with-analytics/contributors) who participated in this project.
