@@ -38,5 +38,17 @@
   "storeDBusername" : "WSO2_MB_STORE_DB",
   "storeDBpassword" : "secr3t",
   "storeDBdriverClass" : "oracle.jdbc.OracleDriver",
-  "storeDBvalidationQuery" : "SELECT 1 FROM DUAL"
+  "storeDBvalidationQuery" : "SELECT 1 FROM DUAL",
+
+  "analyticsEventStoreDBurl" : "jdbc:oracle:thin:@(DESCRIPTION= (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =dbautomation-dev.nrb.be)(PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = AUTOMDO_APP)))",
+  "analyticsEventStoreDBusername" : "WSO2_ANALYTICS_EVENT_STORE_DB",
+  "analyticsEventStoreDBpassword" : "secr3t",
+  "analyticsEventStoreDBdriverClass" : "oracle.jdbc.OracleDriver",
+  "analyticsEventStoreDBvalidationQuery" : "SELECT 1 FROM DUAL",
+
+  "analyticsProcessedEventStoreDBurl" : "jdbc:oracle:thin:@(DESCRIPTION= (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =dbautomation-dev.nrb.be)(PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = AUTOMDO_APP)))",
+  "analyticsProcessedEventStoreDBusername" : "WSO2_A_PROCESSED_DS",
+  "analyticsProcessedEventStoreDBpassword" : "secr3t",
+  "analyticsProcessedEventStoreDBdriverClass" : "oracle.jdbc.OracleDriver",
+  "analyticsProcessedEventStoreDBvalidationQuery" : "SELECT 1 FROM DUAL"
 }

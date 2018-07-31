@@ -1,0 +1,28 @@
+<datasources-configuration xmlns:svns="http://org.wso2.securevault/configuration">
+  <providers>
+    <provider>org.wso2.carbon.ndatasource.rdbms.RDBMSDataSourceReader</provider>
+  </providers>
+  <datasources>
+    <datasource>
+      <name>WSO2_CARBON_DB</name>
+      <description>The datasource used for registry and user manager</description>
+      <jndiConfig>
+        <name>jdbc/WSO2CarbonDB</name>
+      </jndiConfig>
+      <definition
+        type="RDBMS">
+        <configuration>
+          <driverClassName>@carbonDBdriverClass@</driverClassName>
+          <url>@carbonDBurl@</url>
+          <username>@carbonDBusername@</username>
+          <password>@carbonDBpassword@</password>
+          <maxActive>50</maxActive>
+          <maxWait>60000</maxWait>
+          <testOnBorrow>true</testOnBorrow>
+          <validationQuery>@carbonDBvalidationQuery@</validationQuery>
+          <validationInterval>30000</validationInterval>
+        </configuration>
+      </definition>
+    </datasource>
+  </datasources>
+</datasources-configuration>

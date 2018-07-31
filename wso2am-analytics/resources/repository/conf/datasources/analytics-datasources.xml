@@ -1,0 +1,48 @@
+<datasources-configuration>
+    <providers>
+        <provider>org.wso2.carbon.ndatasource.rdbms.RDBMSDataSourceReader</provider>
+    </providers>
+    <datasources>
+        <datasource>
+            <name>WSO2_ANALYTICS_EVENT_STORE_DB</name>
+            <description>The datasource used for analytics record store</description>
+            <definition type="RDBMS">
+                <configuration>
+                    <driverClassName>@analyticsEventStoreDBdriverClass@</driverClassName>
+                    <url>@analyticsEventStoreDBurl@</url>
+                    <username>@analyticsEventStoreDBusername@</username>
+                    <password>@analyticsEventStoreDBpassword@</password>
+                    <maxActive>50</maxActive>
+                    <maxWait>60000</maxWait>
+                    <validationQuery>@analyticsEventStoreDBvalidationQuery@</validationQuery>
+                    <defaultAutoCommit>false</defaultAutoCommit>
+                    <initialSize>0</initialSize>
+                    <testWhileIdle>true</testWhileIdle>
+                    <minEvictableIdleTimeMillis>4000</minEvictableIdleTimeMillis>
+                    <defaultTransactionIsolation>READ_COMMITTED</defaultTransactionIsolation>
+                </configuration>
+            </definition>
+        </datasource>
+        <datasource>
+            <name>WSO2_ANALYTICS_PROCESSED_DATA_STORE_DB</name>
+            <description>The datasource used for analytics record store</description>
+            <definition type="RDBMS">
+                <configuration>
+                    <driverClassName>@analyticsProcessedEventStoreDBdriverClass@</driverClassName>
+                    <url>@analyticsProcessedEventStoreDBurl@</url>
+                    <username>@analyticsProcessedEventStoreDBusername@</username>
+                    <password>@analyticsProcessedEventStoreDBpassword@</password>
+                    <maxActive>50</maxActive>
+                    <maxWait>60000</maxWait>
+                    <validationQuery>@analyticsProcessedEventStoreDBvalidationQuery@</validationQuery>
+                    <defaultAutoCommit>false</defaultAutoCommit>
+                    <initialSize>0</initialSize>
+                    <testWhileIdle>true</testWhileIdle>
+                    <minEvictableIdleTimeMillis>4000</minEvictableIdleTimeMillis>
+                    <defaultTransactionIsolation>READ_COMMITTED</defaultTransactionIsolation>
+                </configuration>
+            </definition>
+        </datasource>
+    </datasources>
+</datasources-configuration>
+
