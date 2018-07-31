@@ -20,7 +20,7 @@ dependencies {
 }
 
 task downloadWso2{
-  def f = file("wso2am-analytics-${project.version}.zip")
+  def f = file("${buildDir}/wso2am-analytics-${project.version}.zip")
   if (!f.exists()) {
     new URL("https://github.com/wso2/analytics-apim/releases/download/v${project.version}/wso2am-analytics-${project.version}.zip").withInputStream{ i -> f.withOutputStream{ it << i }}
   }
@@ -45,9 +45,10 @@ task copyWso2(type:Copy, dependsOn:"downloadWso2"){
 task copyAllResources(dependsOn: ['copyUnfilteredResource', 'filterResources', 'copyWso2'])
 
 task copyDependencies(type: Copy) {
-   from configurations.compile
-   exclude "jackson-*.jar"
-   into project.buildDir
+  from(configurations.compile)
+  rename {fileName -> fileName.replaceAll("(.*)-\\d.*?\\.jar", "\$1.jar")}
+  exclude "jackson-*.jar"
+  into project.buildDir
 }
 
 task createDockerfile(type: Dockerfile) {
@@ -74,7 +75,7 @@ task createDockerfile(type: Dockerfile) {
   copyFile("files/ssl/*", "/usr/share/pki/ca-trust-source/anchors/")
   runCommand("update-ca-trust && update-ca-trust extract")
   instruction("COPY --chown=wso2carbon:wso2 \"wso2am-analytics-${project.version}.zip\" \"\${USER_HOME}/\"")
-  runCommand("unzip -d \${USER_HOME}/ \${USER_HOME}/wso2am-analytics-${project.version}.zip")
+  runCommand("unzip -q -d \${USER_HOME}/ \${USER_HOME}/wso2am-analytics-${project.version}.zip")
   runCommand("mv \${USER_HOME}/wso2am-analytics-${project.version} \${USER_HOME}/wso2am-analytics")
   runCommand("rm \${USER_HOME}/wso2am-analytics-${project.version}.zip")
   runCommand('mkdir -p /etc/.java/.userPrefs && mkdir -p /etc/.java/.systemPrefs && chmod -R 777 /etc/.java')
@@ -83,7 +84,7 @@ task createDockerfile(type: Dockerfile) {
   copyFile('dnsjava.jar', '\${USER_HOME}/wso2am-analytics/repository/components/lib/')
   copyFile('kubernetes-membership-scheme.jar', '\${USER_HOME}/wso2am-analytics/repository/components/dropins/')
   runCommand('chown -R \${USER}:\${USER_GROUP} \${USER_HOME}/wso2am-analytics')
-  instruction('COPY --chown=wso2carbon:wso2 "files/repository/ \${USER_HOME}/wso2am-analytics/repository/"')
+  instruction('COPY --chown=wso2carbon:wso2 "files/repository/" "\${USER_HOME}/wso2am-analytics/repository/"')
   user('\${USER}')
   workingDir('\${USER_HOME}')
 
@@ -98,6 +99,5 @@ task buildDockerImage(type: DockerBuildImage, dependsOn: ['createDockerfile']) {
   tag = 'nrb/wso2am-analytics'
 }
 
-processResources.dependsOn copyAllResources
-processResources.dependsOn copyDependencies
-compileJava.dependsOn buildDockerImage
+processResources.dependsOn(['copyAllResources', 'copyDependencies'])
+build.dependsOn(['processResources', 'buildDockerImage'])

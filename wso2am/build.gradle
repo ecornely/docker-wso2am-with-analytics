@@ -20,7 +20,7 @@ dependencies {
 }
 
 task downloadWso2{
-  def f = file("wso2am-${project.version}.zip")
+  def f = file("${buildDir}/wso2am-${project.version}.zip")
   if (!f.exists()) {
     new URL("https://github.com/wso2/product-apim/releases/download/v${project.version}/wso2am-${project.version}.zip").withInputStream{ i -> f.withOutputStream{ it << i }}
   }
@@ -74,7 +74,7 @@ task createDockerfile(type: Dockerfile) {
   copyFile("files/ssl/*", "/usr/share/pki/ca-trust-source/anchors/")
   runCommand("update-ca-trust && update-ca-trust extract")
   instruction('COPY --chown=wso2carbon:wso2 "wso2am-\${WSO2AM_VERSION}.zip" "\${USER_HOME}/"')
-  runCommand('unzip -d \${USER_HOME}/ \${USER_HOME}/wso2am-\${WSO2AM_VERSION}.zip')
+  runCommand('unzip -q -d \${USER_HOME}/ \${USER_HOME}/wso2am-\${WSO2AM_VERSION}.zip')
   runCommand('mv \${USER_HOME}/wso2am-\${WSO2AM_VERSION} \${USER_HOME}/wso2am')
   runCommand('rm \${USER_HOME}/wso2am-\${WSO2AM_VERSION}.zip')
   runCommand('mkdir -p /etc/.java/.userPrefs && mkdir -p /etc/.java/.systemPrefs && chmod -R 777 /etc/.java')
